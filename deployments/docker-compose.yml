@@ -1,0 +1,57 @@
+version: "3.9"
+services:
+  # api
+  # goboil-clean-api:
+  #   container_name: goboil-clean-api
+  #   image: goboil-clean-api:latest
+  #   ports:
+  #     - "3030:3030"
+  #   depends_on: 
+  #     - goboil-clean-postgres
+  #     - goboil-clean-redis
+  #     - goboil-clean-es-01
+  #   networks:
+  #     - goboil-clean-net
+    
+  # postgres
+  goboil-clean-postgres:
+    container_name: goboil-clean-postgres
+    image: postgres:12-alpine 
+    environment: 
+      - POSTGRES_USER=goboil_hex_user
+      - POSTGRES_PASSWORD=f72d8509-c70a-485a-a471-23f899b988ab
+      - POSTGRES_DB=goboil_hex_db
+    volumes: 
+      - goboil-clean-postgres:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    networks:
+      - goboil-clean-net
+  
+  # redis
+  goboil-clean-redis:
+    image: "redis:alpine"
+    container_name: goboil-clean-redis
+    command: redis-server --requirepass 21541e54-d91c-4c4b-ab94-26fa5a46a654
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    volumes:
+      - goboil-clean-redis:/var/lib/redis
+      - goboil-clean-redis-conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - goboil-clean-net
+
+volumes:
+  goboil-clean-postgres:
+    external: true
+  goboil-clean-redis:
+    external: true
+  goboil-clean-redis-conf:
+    external: true
+
+networks:
+  goboil-clean-net:
+    name: goboil-clean-net
