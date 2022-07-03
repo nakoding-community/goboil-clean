@@ -17,10 +17,6 @@ type Migration interface {
 	SetDb(*gorm.DB)
 }
 
-/*
-concate brand code + variant code => variant code
-concate brand code + variant code + types code => product code
-*/
 type migration struct {
 	Db            *gorm.DB
 	DbModels      *[]interface{}

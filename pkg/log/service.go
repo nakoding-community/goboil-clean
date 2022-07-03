@@ -7,19 +7,9 @@ import (
 )
 
 const (
-	INDEX_LOG_ERROR    = "log_error"
-	INDEX_LOG_ACTIVITY = "log_activity"
-	INDEX_LOG_LOGIN    = "log_login"
+	INDEX_LOG_ERROR = "log_error"
 )
 
 func InsertErrorLog(ctx context.Context, log *LogError) error {
 	return elasticsearch.Insert(ctx, INDEX_LOG_ERROR, log)
-}
-
-func InsertActivityLog(ctx context.Context, log *LogError) error {
-	return elasticsearch.Insert(ctx, INDEX_LOG_ACTIVITY, log)
-}
-
-func InsertLoginLog(ctx context.Context, log *LogError) error {
-	return elasticsearch.Insert(ctx, INDEX_LOG_LOGIN, log)
 }

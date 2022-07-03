@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a doc for codeid-boiler.",
-        "title": "codeid-boiler",
+        "description": "This is a doc for goboil-clean.",
+        "title": "goboil-clean",
         "contact": {},
         "version": "0.0.1"
     },
@@ -94,7 +94,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AuthRegisterResponseDoc"
+                            "$ref": "#/definitions/dto.AuthLoginResponseDoc"
                         }
                     },
                     "400": {
@@ -118,14 +118,14 @@
                 }
             }
         },
-        "/samples": {
+        "/users": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get samples",
+                "description": "Get user",
                 "consumes": [
                     "application/json"
                 ],
@@ -133,35 +133,10 @@
                     "application/json"
                 ],
                 "tags": [
-                    "samples"
+                    "user"
                 ],
-                "summary": "Get samples",
+                "summary": "Get user",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "name": "created_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "created_by",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "key",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "modified_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "modified_by",
-                        "in": "query"
-                    },
                     {
                         "type": "integer",
                         "name": "page",
@@ -174,17 +149,21 @@
                     },
                     {
                         "type": "string",
-                        "name": "sort",
+                        "name": "search",
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
                         "name": "sort_by",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "value",
+                        "description": "name",
+                        "name": "name",
                         "in": "query"
                     }
                 ],
@@ -192,7 +171,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SampleGetResponseDoc"
+                            "$ref": "#/definitions/dto.SearchGetResponseDoc"
                         }
                     },
                     "400": {
@@ -221,7 +200,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "Create samples",
+                "description": "Create user",
                 "consumes": [
                     "application/json"
                 ],
@@ -229,9 +208,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "samples"
+                    "user"
                 ],
-                "summary": "Create samples",
+                "summary": "Create user",
                 "parameters": [
                     {
                         "description": "request body",
@@ -239,7 +218,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.SampleCreateRequest"
+                            "$ref": "#/definitions/dto.CreateUserRequest"
                         }
                     }
                 ],
@@ -247,7 +226,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SampleCreateResponseDoc"
+                            "$ref": "#/definitions/dto.UserResponseDoc"
                         }
                     },
                     "400": {
@@ -271,14 +250,14 @@
                 }
             }
         },
-        "/samples/{id}": {
-            "delete": {
+        "/users/{id}": {
+            "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Delete samples",
+                "description": "Get user by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -286,12 +265,12 @@
                     "application/json"
                 ],
                 "tags": [
-                    "samples"
+                    "user"
                 ],
-                "summary": "Delete samples",
+                "summary": "Get user by id",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "id path",
                         "name": "id",
                         "in": "path",
@@ -302,7 +281,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SampleDeleteResponseDoc"
+                            "$ref": "#/definitions/dto.UserResponseDoc"
                         }
                     },
                     "400": {
@@ -325,13 +304,13 @@
                     }
                 }
             },
-            "patch": {
+            "put": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Update samples",
+                "description": "Update user",
                 "consumes": [
                     "application/json"
                 ],
@@ -339,12 +318,12 @@
                     "application/json"
                 ],
                 "tags": [
-                    "samples"
+                    "user"
                 ],
-                "summary": "Update samples",
+                "summary": "Update user",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "id path",
                         "name": "id",
                         "in": "path",
@@ -356,7 +335,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.SampleUpdateRequest"
+                            "$ref": "#/definitions/dto.UpdateUserRequest"
                         }
                     }
                 ],
@@ -364,7 +343,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SampleUpdateResponseDoc"
+                            "$ref": "#/definitions/dto.UserResponseDoc"
                         }
                     },
                     "400": {
@@ -386,16 +365,14 @@
                         }
                     }
                 }
-            }
-        },
-        "/samples/{id}/{child}/{child_id}": {
-            "get": {
+            },
+            "delete": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get samples by id",
+                "description": "Delete user",
                 "consumes": [
                     "application/json"
                 ],
@@ -403,12 +380,12 @@
                     "application/json"
                 ],
                 "tags": [
-                    "samples"
+                    "user"
                 ],
-                "summary": "Get samples by id",
+                "summary": "Delete user",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "id path",
                         "name": "id",
                         "in": "path",
@@ -419,7 +396,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SampleGetByIDResponseDoc"
+                            "$ref": "#/definitions/dto.UserResponseDoc"
                         }
                     },
                     "400": {
@@ -460,10 +437,18 @@
                 "page_size": {
                     "type": "integer"
                 },
-                "sort": {
+                "total_page": {
+                    "type": "integer"
+                }
+            }
+        },
+        "abstraction.QueryFilter": {
+            "type": "object",
+            "properties": {
+                "field": {
                     "type": "string"
                 },
-                "sort_by": {
+                "value": {
                     "type": "string"
                 }
             }
@@ -487,10 +472,8 @@
             "type": "object",
             "required": [
                 "email",
-                "is_active",
                 "name",
-                "password",
-                "phone"
+                "password"
             ],
             "properties": {
                 "created_at": {
@@ -503,10 +486,7 @@
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "is_active": {
-                    "type": "boolean"
+                    "type": "string"
                 },
                 "modified_at": {
                     "type": "string"
@@ -520,7 +500,7 @@
                 "password": {
                     "type": "string"
                 },
-                "phone": {
+                "role": {
                     "type": "string"
                 },
                 "token": {
@@ -548,37 +528,76 @@
             "type": "object",
             "required": [
                 "email",
-                "is_active",
                 "name",
-                "password",
-                "phone"
+                "password"
             ],
             "properties": {
                 "email": {
                     "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CreateUserRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
                 },
-                "phone": {
+                "name": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }
         },
-        "dto.AuthRegisterResponse": {
+        "dto.SearchGetResponseDoc": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {}
+                },
+                "pagination_info": {
+                    "$ref": "#/definitions/abstraction.PaginationInfo"
+                }
+            }
+        },
+        "dto.UpdateUserRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserResponse": {
             "type": "object",
             "required": [
                 "email",
-                "is_active",
                 "name",
-                "password",
-                "phone"
+                "password"
             ],
             "properties": {
                 "created_at": {
@@ -591,10 +610,7 @@
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "is_active": {
-                    "type": "boolean"
+                    "type": "string"
                 },
                 "modified_at": {
                     "type": "string"
@@ -607,401 +623,22 @@
                 },
                 "password": {
                     "type": "string"
-                },
-                "phone": {
-                    "type": "string"
                 }
             }
         },
-        "dto.AuthRegisterResponseDoc": {
+        "dto.UserResponseDoc": {
             "type": "object",
             "properties": {
                 "body": {
                     "type": "object",
                     "properties": {
                         "data": {
-                            "$ref": "#/definitions/dto.AuthRegisterResponse"
+                            "$ref": "#/definitions/dto.UserResponse"
                         },
                         "meta": {
                             "$ref": "#/definitions/response.Meta"
                         }
                     }
-                }
-            }
-        },
-        "dto.SampleCreateRequest": {
-            "type": "object",
-            "required": [
-                "key",
-                "value"
-            ],
-            "properties": {
-                "key": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SampleCreateResponse": {
-            "type": "object",
-            "required": [
-                "key",
-                "value"
-            ],
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "sample_childs": {
-                    "description": "relations",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.SampleChildEntityModel"
-                    }
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SampleCreateResponseDoc": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "$ref": "#/definitions/dto.SampleCreateResponse"
-                        },
-                        "meta": {
-                            "$ref": "#/definitions/response.Meta"
-                        }
-                    }
-                }
-            }
-        },
-        "dto.SampleDeleteResponse": {
-            "type": "object",
-            "required": [
-                "key",
-                "value"
-            ],
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "sample_childs": {
-                    "description": "relations",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.SampleChildEntityModel"
-                    }
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SampleDeleteResponseDoc": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "$ref": "#/definitions/dto.SampleDeleteResponse"
-                        },
-                        "meta": {
-                            "$ref": "#/definitions/response.Meta"
-                        }
-                    }
-                }
-            }
-        },
-        "dto.SampleGetByIDResponse": {
-            "type": "object",
-            "required": [
-                "key",
-                "value"
-            ],
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "sample_childs": {
-                    "description": "relations",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.SampleChildEntityModel"
-                    }
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SampleGetByIDResponseDoc": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "$ref": "#/definitions/dto.SampleGetByIDResponse"
-                        },
-                        "meta": {
-                            "$ref": "#/definitions/response.Meta"
-                        }
-                    }
-                }
-            }
-        },
-        "dto.SampleGetResponseDoc": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.SampleEntityModel"
-                            }
-                        },
-                        "meta": {
-                            "$ref": "#/definitions/response.Meta"
-                        }
-                    }
-                }
-            }
-        },
-        "dto.SampleUpdateRequest": {
-            "type": "object",
-            "required": [
-                "id",
-                "key",
-                "value"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SampleUpdateResponse": {
-            "type": "object",
-            "required": [
-                "key",
-                "value"
-            ],
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "sample_childs": {
-                    "description": "relations",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.SampleChildEntityModel"
-                    }
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SampleUpdateResponseDoc": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "$ref": "#/definitions/dto.SampleUpdateResponse"
-                        },
-                        "meta": {
-                            "$ref": "#/definitions/response.Meta"
-                        }
-                    }
-                }
-            }
-        },
-        "model.SampleChildEntityModel": {
-            "type": "object",
-            "required": [
-                "key",
-                "value"
-            ],
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "sample_grand_childs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.SampleGrandChildEntityModel"
-                    }
-                },
-                "sample_id": {
-                    "description": "relations",
-                    "type": "integer"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.SampleEntityModel": {
-            "type": "object",
-            "required": [
-                "key",
-                "value"
-            ],
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "sample_childs": {
-                    "description": "relations",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.SampleChildEntityModel"
-                    }
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.SampleGrandChildEntityModel": {
-            "type": "object",
-            "required": [
-                "key",
-                "value"
-            ],
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "modified_at": {
-                    "type": "string"
-                },
-                "modified_by": {
-                    "type": "string"
-                },
-                "sample_child_id": {
-                    "description": "relations",
-                    "type": "integer"
-                },
-                "value": {
-                    "type": "string"
                 }
             }
         },

@@ -6,16 +6,16 @@ import (
 	"os"
 
 	docs "github.com/nakoding-community/goboil-clean/docs"
-	"github.com/nakoding-community/goboil-clean/internal/app/auth"
-	"github.com/nakoding-community/goboil-clean/internal/app/user"
 	"github.com/nakoding-community/goboil-clean/internal/factory"
+	"github.com/nakoding-community/goboil-clean/internal/handler/http/auth"
+	"github.com/nakoding-community/goboil-clean/internal/handler/http/user"
 	"github.com/nakoding-community/goboil-clean/pkg/constant"
 
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-func Init(e *echo.Echo, f *factory.Factory) {
+func Init(e *echo.Echo, f factory.Factory) {
 	var (
 		APP     = os.Getenv(constant.APP)
 		VERSION = os.Getenv(constant.VERSION)

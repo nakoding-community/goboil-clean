@@ -2,20 +2,18 @@ package constant
 
 // General
 const (
-	APP                                  = "APP"
-	APP_NAME                             = "github.com/nakoding-community/goboil-clean"
-	PORT                                 = "PORT"
-	ENV                                  = "ENV"
-	VERSION                              = "VERSION"
-	HOST                                 = "HOST"
-	SCHEME                               = "SCHEME"
-	JWT_KEY                              = "JWT_KEY"
-	FIRESTORE_COLLECTION_DASHBOARD_ORDER = "dashboard-order"
-	FIRESTORE_COLLECTION_TOTAL_ORDER     = "total-order"
-	FIRESTORE_PROJECT_ID                 = "FIRESTORE_PROJECT_ID"
-	IS_RUN_MIGRATION                     = "IS_RUN_MIGRATION"
-	IS_RUN_SEEDER                        = "IS_RUN_SEEDER"
-	IS_RUN_CRON                          = "IS_RUN_CRON"
+	APP                  = "APP"
+	APP_NAME             = "github.com/nakoding-community/goboil-clean"
+	PORT                 = "PORT"
+	ENV                  = "ENV"
+	VERSION              = "VERSION"
+	HOST                 = "HOST"
+	SCHEME               = "SCHEME"
+	JWT_KEY              = "JWT_KEY"
+	FIRESTORE_PROJECT_ID = "FIRESTORE_PROJECT_ID"
+	IS_RUN_MIGRATION     = "IS_RUN_MIGRATION"
+	IS_RUN_SEEDER        = "IS_RUN_SEEDER"
+	IS_RUN_CRON          = "IS_RUN_CRON"
 )
 
 // Db

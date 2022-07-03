@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/nakoding-community/goboil-clean/internal/abstraction"
 	"github.com/nakoding-community/goboil-clean/pkg/constant"
 	"github.com/nakoding-community/goboil-clean/pkg/util/date"
@@ -18,7 +19,6 @@ type UserEntity struct {
 	Email        string `json:"email" validate:"required,email" gorm:"index:idx_user_email;unique;size:150;not null"`
 	PasswordHash string `json:"-"`
 	Password     string `json:"password" validate:"required" gorm:"-"`
-	Token        string `json:"token"`
 }
 
 type UserEntityModel struct {
@@ -37,6 +37,7 @@ func (UserEntityModel) TableName() string {
 }
 
 func (m *UserEntityModel) BeforeCreate(tx *gorm.DB) (err error) {
+	m.ID = uuid.New()
 	m.CreatedAt = *date.DateTodayLocal()
 	m.CreatedBy = constant.DB_DEFAULT_CREATED_BY
 

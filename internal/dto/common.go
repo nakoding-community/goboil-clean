@@ -3,7 +3,6 @@ package dto
 import (
 	"encoding/json"
 	"net/http"
-	"reflect"
 	"strings"
 	"time"
 
@@ -12,6 +11,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
+
+type SearchGetResponseDoc struct {
+	Datas          []interface{} `json:"data"`
+	PaginationInfo abstraction.PaginationInfo
+}
+
+type ByIDRequest struct {
+	ID uuid.UUID `param:"id" validate:"required"`
+}
 
 type cUUID struct {
 	uuid.UUID
@@ -72,22 +80,6 @@ func (c *cTime) ToTime() time.Time {
 	return c.Time
 }
 
-type SearchGetRequest struct {
-	abstraction.Pagination
-	Search   string   `query:"search"`
-	AscField []string `query:"asc_field"`
-	DscField []string `query:"dsc_field"`
-}
-
-type SearchGetResponse[T any] struct {
-	Datas          []T `json:"data"`
-	PaginationInfo abstraction.PaginationInfo
-}
-
-type ByIDRequest struct {
-	ID uuid.UUID `param:"id" validate:"required"`
-}
-
 func (r *ByIDRequest) UnmarshalJSON(data []byte) error {
 	var id string
 	if err := json.Unmarshal(data, &id); err != nil {
@@ -105,38 +97,4 @@ func (r *ByIDRequest) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
-}
-
-type Filter struct {
-	Field string
-	Value string
-}
-
-func BindFilter[T any](c echo.Context, model T, name string) []Filter {
-	var filters []Filter
-
-	req := c.Request()
-	queries := req.URL.Query()
-	modelVal := reflect.ValueOf(model)
-
-	for key, _ := range queries {
-		if strings.HasPrefix(key, "filter") {
-
-			field := strings.SplitN(key, "_", 2)
-			if len(field) < 2 {
-				continue
-			}
-
-			for i := 0; i < modelVal.NumField(); i++ {
-				if modelVal.Type().Field(i).Tag.Get("json") == field[1] {
-					filters = append(filters, Filter{
-						Field: name + "." + field[1],
-						Value: queries[key][0],
-					})
-				}
-			}
-		}
-	}
-
-	return filters
 }

@@ -10,7 +10,7 @@ Golang boilerplate with clean architecture
 $ git clone 
 
 # go into app's directory
-$ cd my-project
+$ cd goboil-clean
 ```
 
 ## Build & Run
@@ -20,29 +20,18 @@ Local environment
 # build 
 $ go build
 
-# run in development 
+# run 
 $ ENV=DEV go run main.go
 $ ENV=DEV ./filego
-
-# run in staging 
-$ ENV=STAGING go run main.go
-$ ENV=STAGING ./filego
-
-# run in production 
-$ ENV=PROD go run main.go
-$ ENV=PROD ./filego
 ```
 
 Docker environment
 ``` bash
 # build 
-$ docker build -t goboil-api:latest .
-
-# config
-sudo sysctl -w vm.max_map_count=262144 # it is required for elasticsearch config
+$ docker build -t goboil-clean-api:latest .
 
 # run
-$ docker compose up
+$ docker compose -f deployments/docker-compose.yml up -d
 ```
 
 ## Documentation
@@ -50,7 +39,7 @@ $ docker compose up
 Install environment
 ``` bash
 # get swagger package 
-$ go get github.com/swaggo/swag
+$ go install github.com/swaggo/swag/cmd/swag@latest
 
 # move to swagger dir
 $ cd $GOPATH/src/github.com/swaggo/swag
@@ -68,39 +57,28 @@ to see the results, run app and access {{url}}/swagger/index.html
 
 ## Description 
 This project built in clean architecture that contains :
-1. Http
-2. Factory
-3. Middleware 
-4. Handler
-5. Binder
-6. Validation
-7. Service
-8. Repository
-9. Model
-10. Database
-
-This project have some default function :
-- Context
-- Validator
-- Transaction
-- Pagination & Sort
-- Filter
-- Env
-- Response
-- Redis
-- Elasticsearch
-- Log
+1. Factory   
+2. Middleware 
+3. Handler
+4. Binder
+5. Validation
+6. Usecase
+7. Repository
+8. Model
+9. Database
+9. Migration
+10. Seed
 
 This project have some default endpoint :
 - Auth 
   - Login
   - Register
 - Sample
-  - Get (with pagination, sort, & filter)
+  - Get (with pagination, sort & filter)
   - GetByID
-  - Create (with transaction)
-  - Update (with transaction)
+  - Create (with transaction scope)
+  - Update (with transaction scope)
   - Delete
 
 # Author
-Nakoding Community Team
+Muhammad Cholis Malik

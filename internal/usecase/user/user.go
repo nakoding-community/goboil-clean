@@ -3,37 +3,33 @@ package user
 import (
 	"github.com/nakoding-community/goboil-clean/internal/abstraction"
 	"github.com/nakoding-community/goboil-clean/internal/dto"
-	"github.com/nakoding-community/goboil-clean/internal/factory"
+	"github.com/nakoding-community/goboil-clean/internal/factory/repository"
 	"github.com/nakoding-community/goboil-clean/internal/model"
-	"github.com/nakoding-community/goboil-clean/internal/repository"
 	res "github.com/nakoding-community/goboil-clean/pkg/util/response"
 	"github.com/nakoding-community/goboil-clean/pkg/util/str"
 	"github.com/nakoding-community/goboil-clean/pkg/util/trxmanager"
 
 	"github.com/google/uuid"
-
-	"gorm.io/gorm"
 )
 
-type Service interface {
-	Find(ctx *abstraction.Context, payload *dto.SearchGetRequest, filters []dto.Filter) (*dto.SearchGetResponse[dto.UserResponse], error)
+type Usecase interface {
+	Find(ctx *abstraction.Context, payload *abstraction.SearchGetRequest) (*abstraction.SearchGetResponse[dto.UserResponse], error)
 	FindByID(ctx *abstraction.Context, payload *dto.ByIDRequest) (*dto.UserResponse, error)
 	Create(ctx *abstraction.Context, payload *dto.CreateUserRequest) (*dto.UserResponse, error)
 	Update(ctx *abstraction.Context, payload *dto.UpdateUserRequest) (*dto.UserResponse, error)
 	Delete(ctx *abstraction.Context, payload *dto.ByIDRequest) (*dto.UserResponse, error)
 }
 
-type service struct {
-	UserRepository repository.User
-	Db             *gorm.DB
+type usecase struct {
+	RepositoryFactory repository.Factory
 }
 
-func NewService(f *factory.Factory) *service {
-	return &service{f.UserRepository, f.Db}
+func NewUsecase(f repository.Factory) *usecase {
+	return &usecase{f}
 }
 
-func (s *service) Find(ctx *abstraction.Context, payload *dto.SearchGetRequest, filters []dto.Filter) (*dto.SearchGetResponse[dto.UserResponse], error) {
-	users, info, err := s.UserRepository.FindAll(ctx, payload, &payload.Pagination, filters)
+func (u *usecase) Find(ctx *abstraction.Context, payload *abstraction.SearchGetRequest) (*abstraction.SearchGetResponse[dto.UserResponse], error) {
+	users, info, err := u.RepositoryFactory.UserRepository.FindAll(ctx, payload, &payload.Pagination)
 	if err != nil {
 		return nil, res.ErrorBuilder(&res.ErrorConstant.InternalServerError, err)
 	}
@@ -45,22 +41,19 @@ func (s *service) Find(ctx *abstraction.Context, payload *dto.SearchGetRequest, 
 		})
 	}
 
-	result := new(dto.SearchGetResponse[dto.UserResponse])
+	result := new(abstraction.SearchGetResponse[dto.UserResponse])
 	result.Datas = datas
 	result.PaginationInfo = *info
 
 	return result, nil
 }
 
-func (s *service) FindByID(ctx *abstraction.Context, payload *dto.ByIDRequest) (*dto.UserResponse, error) {
+func (u *usecase) FindByID(ctx *abstraction.Context, payload *dto.ByIDRequest) (*dto.UserResponse, error) {
 	var result *dto.UserResponse
 
-	data, err := s.UserRepository.FindByID(ctx, payload.ID)
+	data, err := u.RepositoryFactory.UserRepository.FindByID(ctx, payload.ID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return result, res.ErrorBuilder(&res.ErrorConstant.NotFound, err)
-		}
-		return result, res.ErrorBuilder(&res.ErrorConstant.InternalServerError, err)
+		return result, err
 	}
 
 	result = &dto.UserResponse{
@@ -70,7 +63,7 @@ func (s *service) FindByID(ctx *abstraction.Context, payload *dto.ByIDRequest) (
 	return result, nil
 }
 
-func (s *service) Create(ctx *abstraction.Context, payload *dto.CreateUserRequest) (*dto.UserResponse, error) {
+func (u *usecase) Create(ctx *abstraction.Context, payload *dto.CreateUserRequest) (*dto.UserResponse, error) {
 	var email string
 	if payload.Email != nil {
 		email = *payload.Email
@@ -95,8 +88,8 @@ func (s *service) Create(ctx *abstraction.Context, payload *dto.CreateUserReques
 	)
 	var err error
 
-	if err = trxmanager.New(s.Db).WithTrx(ctx, func(ctx *abstraction.Context) error {
-		user, err = s.UserRepository.Create(ctx, user)
+	if err = trxmanager.New(u.RepositoryFactory.Db).WithTrx(ctx, func(ctx *abstraction.Context) error {
+		user, err = u.RepositoryFactory.UserRepository.Create(ctx, user)
 		if err != nil {
 			return err
 		}
@@ -113,7 +106,7 @@ func (s *service) Create(ctx *abstraction.Context, payload *dto.CreateUserReques
 	return result, nil
 }
 
-func (s *service) Update(ctx *abstraction.Context, payload *dto.UpdateUserRequest) (*dto.UserResponse, error) {
+func (u *usecase) Update(ctx *abstraction.Context, payload *dto.UpdateUserRequest) (*dto.UserResponse, error) {
 	var (
 		result *dto.UserResponse
 		user   = model.UserEntityModel{
@@ -132,19 +125,15 @@ func (s *service) Update(ctx *abstraction.Context, payload *dto.UpdateUserReques
 		user.Password = ""
 	}
 
-	if payload.Token != "" {
-		user.Token = payload.Token
-	}
-
-	if err = trxmanager.New(s.Db).WithTrx(ctx, func(ctx *abstraction.Context) error {
-		user, err = s.UserRepository.UpdateByID(ctx, payload.ID, user)
+	if err = trxmanager.New(u.RepositoryFactory.Db).WithTrx(ctx, func(ctx *abstraction.Context) error {
+		user, err = u.RepositoryFactory.UserRepository.UpdateByID(ctx, payload.ID, user)
 		if err != nil {
 			return err
 		}
 
-		user, err = s.UserRepository.FindByID(ctx, payload.ID)
+		user, err = u.RepositoryFactory.UserRepository.FindByID(ctx, payload.ID)
 		if err != nil {
-			return res.ErrorBuilder(&res.ErrorConstant.NotFound, err)
+			return err
 		}
 
 		return nil
@@ -159,18 +148,18 @@ func (s *service) Update(ctx *abstraction.Context, payload *dto.UpdateUserReques
 	return result, nil
 }
 
-func (s *service) Delete(ctx *abstraction.Context, payload *dto.ByIDRequest) (*dto.UserResponse, error) {
+func (u *usecase) Delete(ctx *abstraction.Context, payload *dto.ByIDRequest) (*dto.UserResponse, error) {
 	var result *dto.UserResponse
 	var data model.UserEntityModel
 	var err error
 
-	if err = trxmanager.New(s.Db).WithTrx(ctx, func(ctx *abstraction.Context) error {
-		data, err = s.UserRepository.FindByID(ctx, payload.ID)
+	if err = trxmanager.New(u.RepositoryFactory.Db).WithTrx(ctx, func(ctx *abstraction.Context) error {
+		data, err = u.RepositoryFactory.UserRepository.FindByID(ctx, payload.ID)
 		if err != nil {
-			return res.ErrorBuilder(&res.ErrorConstant.BadRequest, err)
+			return err
 		}
 
-		err = s.UserRepository.DeleteByID(ctx, payload.ID)
+		err = u.RepositoryFactory.UserRepository.DeleteByID(ctx, payload.ID)
 		if err != nil {
 			return err
 		}

@@ -3,34 +3,31 @@ package auth
 import (
 	"github.com/nakoding-community/goboil-clean/internal/abstraction"
 	"github.com/nakoding-community/goboil-clean/internal/dto"
-	"github.com/nakoding-community/goboil-clean/internal/factory"
+	"github.com/nakoding-community/goboil-clean/internal/factory/repository"
 	"github.com/nakoding-community/goboil-clean/internal/model"
-	"github.com/nakoding-community/goboil-clean/internal/repository"
 	res "github.com/nakoding-community/goboil-clean/pkg/util/response"
 	"github.com/nakoding-community/goboil-clean/pkg/util/trxmanager"
 
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
-type Service interface {
+type Usecase interface {
 	Login(ctx *abstraction.Context, payload *dto.AuthLoginRequest) (*dto.AuthLoginResponse, error)
 	Register(ctx *abstraction.Context, payload *dto.AuthRegisterRequest) (*dto.AuthRegisterResponse, error)
 }
 
-type service struct {
-	Db         *gorm.DB
-	Repository repository.User
+type usecase struct {
+	RepositoryFactory repository.Factory
 }
 
-func NewService(f *factory.Factory) *service {
-	return &service{f.Db, f.UserRepository}
+func NewUsecase(f repository.Factory) *usecase {
+	return &usecase{f}
 }
 
-func (s *service) Login(ctx *abstraction.Context, payload *dto.AuthLoginRequest) (*dto.AuthLoginResponse, error) {
+func (s *usecase) Login(ctx *abstraction.Context, payload *dto.AuthLoginRequest) (*dto.AuthLoginResponse, error) {
 	var result *dto.AuthLoginResponse
 
-	data, err := s.Repository.FindByEmail(ctx, &payload.Email)
+	data, err := s.RepositoryFactory.UserRepository.FindByEmail(ctx, &payload.Email)
 	if data == nil {
 		return result, res.ErrorBuilder(&res.ErrorConstant.EmailOrPasswordIncorrect, err)
 	}
@@ -52,14 +49,15 @@ func (s *service) Login(ctx *abstraction.Context, payload *dto.AuthLoginRequest)
 	return result, nil
 }
 
-func (s *service) Register(ctx *abstraction.Context, payload *dto.AuthRegisterRequest) (*dto.AuthRegisterResponse, error) {
+func (s *usecase) Register(ctx *abstraction.Context, payload *dto.AuthRegisterRequest) (*dto.AuthRegisterResponse, error) {
 	var result *dto.AuthRegisterResponse
 	var data model.UserEntityModel
+	var err error
 
 	data.UserEntity = payload.UserEntity
 
-	if err = trxmanager.New(s.Db).WithTrx(ctx, func(ctx *abstraction.Context) error {
-		data, err = s.Repository.Create(ctx, data)
+	if err = trxmanager.New(s.RepositoryFactory.Db).WithTrx(ctx, func(ctx *abstraction.Context) error {
+		data, err = s.RepositoryFactory.UserRepository.Create(ctx, data)
 		if err != nil {
 			return err
 		}

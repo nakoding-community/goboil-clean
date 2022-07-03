@@ -2,10 +2,9 @@ package repository
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
-	"github.com/nakoding-community/goboil-clean/internal/dto"
+	"github.com/nakoding-community/goboil-clean/internal/abstraction"
 	"github.com/nakoding-community/goboil-clean/internal/model"
 	res "github.com/nakoding-community/goboil-clean/pkg/util/response"
 
@@ -46,72 +45,25 @@ func Deletes[T validType](conn *gorm.DB, IDs []uuid.UUID, data T) error {
 	return maskError(conn.Delete(&data, IDs).Error)
 }
 
-// BuildFilterQuery
-// for now questomFilter max length is 2
-// index 0 for query
-// index 1 for type
-// example use qustomFilter:
-//
-//	BuildFilterQuery(query, filters, "concat(types.value, ' ',units.unit) = ?", "types.value")
-//	on this example we wont to change query on field 'types.value'  from 'types.value = ?' to 'concat(types.value, ' ',units.unit) = ?
-func BuildFilterQuery(query *gorm.DB, filters []dto.Filter, qustomFilters ...string) {
-	var qustom = false
-	if len(qustomFilters) == 2 {
-		qustom = true
-	}
-
-	for _, filter := range filters {
-		if qustom {
-			if filter.Field == qustomFilters[1] {
-				query = query.Where(qustomFilters[0], filter.Value)
-				continue
-			}
-		}
+func BuildFilterSortQuery[T validType](data T, name string, query *gorm.DB, payload *abstraction.SearchGetRequest) {
+	for _, filter := range payload.Filters {
 		query.Where(filter.Field+" = ?", filter.Value)
 	}
-}
 
-func GetColumnsSort[T validType](AscField, DescField []string, query *gorm.DB, data T, name string, excludes ...string) {
-	var AscValids, DescValids []string
-
-	fields := reflect.ValueOf(&data).Elem()
-
-LoopField:
-	for i := 0; i < fields.NumField(); i++ {
-		column := fields.Type().Field(i).Tag.Get("json")
-
-		for _, exclude := range excludes {
-			if strings.ToLower(column) == strings.ToLower(exclude) {
-				continue LoopField
+	for i := range payload.SortBy {
+		sortBys := strings.Split(payload.SortBy[i], ",")
+		for _, sortBy := range sortBys {
+			prefix := sortBy[:1]
+			sortType := "asc"
+			if prefix == "-" {
+				sortType = "desc"
+				sortBy = sortBy[1:]
 			}
-		}
 
-		for _, val := range AscField {
-			if val == column {
-				AscValids = append(AscValids, name+"."+column)
-			}
-		}
-
-		for _, val := range DescField {
-			fmt.Println(val)
-			if val == column {
-				DescValids = append(DescValids, name+"."+column)
-			}
+			sortArg := fmt.Sprintf("%s.%s %s", name, sortBy, sortType)
+			query = query.Order(sortArg)
 		}
 	}
-
-	if len(AscValids) > 0 {
-		columns := strings.Join(AscValids, ",")
-		query = query.Order(columns + " asc")
-	}
-
-	if len(DescValids) > 0 {
-		columns := strings.Join(DescValids, ",")
-		query = query.Order(columns + " desc")
-
-	}
-
-	return
 }
 
 func maskError(err error) error {

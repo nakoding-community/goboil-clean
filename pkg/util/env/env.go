@@ -24,9 +24,9 @@ func NewEnv() *env {
 func (e *env) Load(env string) {
 	var envFile string
 	switch env {
-	case "staging":
+	case "STG":
 		envFile = "staging"
-	case "production":
+	case "PROD":
 		envFile = "production"
 	default:
 		envFile = "development"

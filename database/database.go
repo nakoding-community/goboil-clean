@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/nakoding-community/goboil-clean/pkg/constant"
 
@@ -43,8 +42,8 @@ func Init() {
 }
 
 func Connection(name string) (*gorm.DB, error) {
-	if dbConnections[strings.ToUpper(name)] == nil {
+	if dbConnections[name] == nil {
 		return nil, errors.New("Connection is undefined")
 	}
-	return dbConnections[strings.ToUpper(name)], nil
+	return dbConnections[name], nil
 }

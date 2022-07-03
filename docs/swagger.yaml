@@ -10,9 +10,14 @@ definitions:
         type: integer
       page_size:
         type: integer
-      sort:
+      total_page:
+        type: integer
+    type: object
+  abstraction.QueryFilter:
+    properties:
+      field:
         type: string
-      sort_by:
+      value:
         type: string
     type: object
   dto.AuthLoginRequest:
@@ -34,9 +39,7 @@ definitions:
       email:
         type: string
       id:
-        type: integer
-      is_active:
-        type: boolean
+        type: string
       modified_at:
         type: string
       modified_by:
@@ -45,16 +48,14 @@ definitions:
         type: string
       password:
         type: string
-      phone:
+      role:
         type: string
       token:
         type: string
     required:
     - email
-    - is_active
     - name
     - password
-    - phone
     type: object
   dto.AuthLoginResponseDoc:
     properties:
@@ -70,22 +71,48 @@ definitions:
     properties:
       email:
         type: string
-      is_active:
-        type: boolean
       name:
         type: string
       password:
         type: string
-      phone:
-        type: string
     required:
     - email
-    - is_active
     - name
     - password
-    - phone
     type: object
-  dto.AuthRegisterResponse:
+  dto.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - name
+    type: object
+  dto.SearchGetResponseDoc:
+    properties:
+      data:
+        items: {}
+        type: array
+      pagination_info:
+        $ref: '#/definitions/abstraction.PaginationInfo'
+    type: object
+  dto.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - id
+    type: object
+  dto.UserResponse:
     properties:
       created_at:
         type: string
@@ -94,9 +121,7 @@ definitions:
       email:
         type: string
       id:
-        type: integer
-      is_active:
-        type: boolean
+        type: string
       modified_at:
         type: string
       modified_by:
@@ -105,274 +130,20 @@ definitions:
         type: string
       password:
         type: string
-      phone:
-        type: string
     required:
     - email
-    - is_active
     - name
     - password
-    - phone
     type: object
-  dto.AuthRegisterResponseDoc:
+  dto.UserResponseDoc:
     properties:
       body:
         properties:
           data:
-            $ref: '#/definitions/dto.AuthRegisterResponse'
+            $ref: '#/definitions/dto.UserResponse'
           meta:
             $ref: '#/definitions/response.Meta'
         type: object
-    type: object
-  dto.SampleCreateRequest:
-    properties:
-      key:
-        type: string
-      value:
-        type: string
-    required:
-    - key
-    - value
-    type: object
-  dto.SampleCreateResponse:
-    properties:
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: integer
-      key:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      sample_childs:
-        description: relations
-        items:
-          $ref: '#/definitions/model.SampleChildEntityModel'
-        type: array
-      value:
-        type: string
-    required:
-    - key
-    - value
-    type: object
-  dto.SampleCreateResponseDoc:
-    properties:
-      body:
-        properties:
-          data:
-            $ref: '#/definitions/dto.SampleCreateResponse'
-          meta:
-            $ref: '#/definitions/response.Meta'
-        type: object
-    type: object
-  dto.SampleDeleteResponse:
-    properties:
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: integer
-      key:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      sample_childs:
-        description: relations
-        items:
-          $ref: '#/definitions/model.SampleChildEntityModel'
-        type: array
-      value:
-        type: string
-    required:
-    - key
-    - value
-    type: object
-  dto.SampleDeleteResponseDoc:
-    properties:
-      body:
-        properties:
-          data:
-            $ref: '#/definitions/dto.SampleDeleteResponse'
-          meta:
-            $ref: '#/definitions/response.Meta'
-        type: object
-    type: object
-  dto.SampleGetByIDResponse:
-    properties:
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: integer
-      key:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      sample_childs:
-        description: relations
-        items:
-          $ref: '#/definitions/model.SampleChildEntityModel'
-        type: array
-      value:
-        type: string
-    required:
-    - key
-    - value
-    type: object
-  dto.SampleGetByIDResponseDoc:
-    properties:
-      body:
-        properties:
-          data:
-            $ref: '#/definitions/dto.SampleGetByIDResponse'
-          meta:
-            $ref: '#/definitions/response.Meta'
-        type: object
-    type: object
-  dto.SampleGetResponseDoc:
-    properties:
-      body:
-        properties:
-          data:
-            items:
-              $ref: '#/definitions/model.SampleEntityModel'
-            type: array
-          meta:
-            $ref: '#/definitions/response.Meta'
-        type: object
-    type: object
-  dto.SampleUpdateRequest:
-    properties:
-      id:
-        type: integer
-      key:
-        type: string
-      value:
-        type: string
-    required:
-    - id
-    - key
-    - value
-    type: object
-  dto.SampleUpdateResponse:
-    properties:
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: integer
-      key:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      sample_childs:
-        description: relations
-        items:
-          $ref: '#/definitions/model.SampleChildEntityModel'
-        type: array
-      value:
-        type: string
-    required:
-    - key
-    - value
-    type: object
-  dto.SampleUpdateResponseDoc:
-    properties:
-      body:
-        properties:
-          data:
-            $ref: '#/definitions/dto.SampleUpdateResponse'
-          meta:
-            $ref: '#/definitions/response.Meta'
-        type: object
-    type: object
-  model.SampleChildEntityModel:
-    properties:
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: integer
-      key:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      sample_grand_childs:
-        items:
-          $ref: '#/definitions/model.SampleGrandChildEntityModel'
-        type: array
-      sample_id:
-        description: relations
-        type: integer
-      value:
-        type: string
-    required:
-    - key
-    - value
-    type: object
-  model.SampleEntityModel:
-    properties:
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: integer
-      key:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      sample_childs:
-        description: relations
-        items:
-          $ref: '#/definitions/model.SampleChildEntityModel'
-        type: array
-      value:
-        type: string
-    required:
-    - key
-    - value
-    type: object
-  model.SampleGrandChildEntityModel:
-    properties:
-      created_at:
-        type: string
-      created_by:
-        type: string
-      id:
-        type: integer
-      key:
-        type: string
-      modified_at:
-        type: string
-      modified_by:
-        type: string
-      sample_child_id:
-        description: relations
-        type: integer
-      value:
-        type: string
-    required:
-    - key
-    - value
     type: object
   response.Meta:
     properties:
@@ -395,8 +166,8 @@ definitions:
 host: localhost:3030
 info:
   contact: {}
-  description: This is a doc for codeid-boiler.
-  title: codeid-boiler
+  description: This is a doc for goboil-clean.
+  title: goboil-clean
   version: 0.0.1
 paths:
   /auth/login:
@@ -451,7 +222,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.AuthRegisterResponseDoc'
+            $ref: '#/definitions/dto.AuthLoginResponseDoc'
         "400":
           description: Bad Request
           schema:
@@ -469,27 +240,12 @@ paths:
       summary: Register user
       tags:
       - auth
-  /samples:
+  /users:
     get:
       consumes:
       - application/json
-      description: Get samples
+      description: Get user
       parameters:
-      - in: query
-        name: created_at
-        type: string
-      - in: query
-        name: created_by
-        type: string
-      - in: query
-        name: key
-        type: string
-      - in: query
-        name: modified_at
-        type: string
-      - in: query
-        name: modified_by
-        type: string
       - in: query
         name: page
         type: integer
@@ -497,13 +253,16 @@ paths:
         name: page_size
         type: integer
       - in: query
-        name: sort
+        name: search
         type: string
       - in: query
+        items:
+          type: string
         name: sort_by
-        type: string
-      - in: query
-        name: value
+        type: array
+      - description: name
+        in: query
+        name: name
         type: string
       produces:
       - application/json
@@ -511,7 +270,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.SampleGetResponseDoc'
+            $ref: '#/definitions/dto.SearchGetResponseDoc'
         "400":
           description: Bad Request
           schema:
@@ -526,27 +285,27 @@ paths:
             $ref: '#/definitions/response.errorResponse'
       security:
       - BearerAuth: []
-      summary: Get samples
+      summary: Get user
       tags:
-      - samples
+      - user
     post:
       consumes:
       - application/json
-      description: Create samples
+      description: Create user
       parameters:
       - description: request body
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.SampleCreateRequest'
+          $ref: '#/definitions/dto.CreateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.SampleCreateResponseDoc'
+            $ref: '#/definitions/dto.UserResponseDoc'
         "400":
           description: Bad Request
           schema:
@@ -561,27 +320,27 @@ paths:
             $ref: '#/definitions/response.errorResponse'
       security:
       - BearerAuth: []
-      summary: Create samples
+      summary: Create user
       tags:
-      - samples
-  /samples/{id}:
+      - user
+  /users/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete samples
+      description: Delete user
       parameters:
       - description: id path
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.SampleDeleteResponseDoc'
+            $ref: '#/definitions/dto.UserResponseDoc'
         "400":
           description: Bad Request
           schema:
@@ -596,32 +355,66 @@ paths:
             $ref: '#/definitions/response.errorResponse'
       security:
       - BearerAuth: []
-      summary: Delete samples
+      summary: Delete user
       tags:
-      - samples
-    patch:
+      - user
+    get:
       consumes:
       - application/json
-      description: Update samples
+      description: Get user by id
       parameters:
       - description: id path
         in: path
         name: id
         required: true
-        type: integer
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponseDoc'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user by id
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: id path
+        in: path
+        name: id
+        required: true
+        type: string
       - description: request body
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.SampleUpdateRequest'
+          $ref: '#/definitions/dto.UpdateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.SampleUpdateResponseDoc'
+            $ref: '#/definitions/dto.UserResponseDoc'
         "400":
           description: Bad Request
           schema:
@@ -636,44 +429,9 @@ paths:
             $ref: '#/definitions/response.errorResponse'
       security:
       - BearerAuth: []
-      summary: Update samples
+      summary: Update user
       tags:
-      - samples
-  /samples/{id}/{child}/{child_id}:
-    get:
-      consumes:
-      - application/json
-      description: Get samples by id
-      parameters:
-      - description: id path
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.SampleGetByIDResponseDoc'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get samples by id
-      tags:
-      - samples
+      - user
 securityDefinitions:
   BearerAuth:
     in: header

@@ -26,9 +26,9 @@ func init() {
 	logrus.Info("Choosen environment " + ENV)
 }
 
-// @title codeid-boiler
+// @title goboil-clean
 // @version 0.0.1
-// @description This is a doc for codeid-boiler.
+// @description This is a doc for goboil-clean.
 
 // @securityDefinitions.apikey BearerAuth
 // @in header
@@ -50,7 +50,7 @@ func main() {
 	e := echo.New()
 	middleware.Init(e)
 
-	f := factory.NewFactory()
+	f := factory.Init()
 	http.Init(e, f)
 
 	//sentry

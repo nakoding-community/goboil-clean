@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/nakoding-community/goboil-clean/internal/abstraction"
-	"github.com/nakoding-community/goboil-clean/internal/dto"
 	"github.com/nakoding-community/goboil-clean/internal/model"
 
 	"github.com/google/uuid"
@@ -13,7 +12,7 @@ import (
 
 type User interface {
 	checkTrx(ctx *abstraction.Context) *gorm.DB
-	FindAll(ctx *abstraction.Context, payload *dto.SearchGetRequest, p *abstraction.Pagination, filters []dto.Filter) ([]model.UserEntityModel, *abstraction.PaginationInfo, error)
+	FindAll(ctx *abstraction.Context, payload *abstraction.SearchGetRequest, p *abstraction.Pagination) ([]model.UserEntityModel, *abstraction.PaginationInfo, error)
 	FindByID(ctx *abstraction.Context, id uuid.UUID) (model.UserEntityModel, error)
 	FindByEmail(ctx *abstraction.Context, email *string) (*model.UserEntityModel, error)
 	Create(ctx *abstraction.Context, data model.UserEntityModel) (model.UserEntityModel, error)
@@ -40,7 +39,7 @@ func (r *user) checkTrx(ctx *abstraction.Context) *gorm.DB {
 	return r.Db.WithContext(ctx.Context)
 }
 
-func (r *user) FindAll(ctx *abstraction.Context, payload *dto.SearchGetRequest, p *abstraction.Pagination, filters []dto.Filter) ([]model.UserEntityModel, *abstraction.PaginationInfo, error) {
+func (r *user) FindAll(ctx *abstraction.Context, payload *abstraction.SearchGetRequest, p *abstraction.Pagination) ([]model.UserEntityModel, *abstraction.PaginationInfo, error) {
 	var users []model.UserEntityModel
 	var count int64
 
@@ -49,9 +48,7 @@ func (r *user) FindAll(ctx *abstraction.Context, payload *dto.SearchGetRequest, 
 		search := "%" + strings.ToLower(payload.Search) + "%"
 		query = query.Where("lower(name) LIKE ? or lower(email) Like ?", search, search)
 	}
-
-	GetColumnsSort[model.UserEntity](payload.AscField, payload.DscField, query, model.UserEntity{}, "users")
-	BuildFilterQuery(query, filters)
+	BuildFilterSortQuery[model.UserEntity](model.UserEntity{}, "users", query, payload)
 
 	countQuery := query
 	if err := countQuery.Count(&count).Error; err != nil {
@@ -59,10 +56,9 @@ func (r *user) FindAll(ctx *abstraction.Context, payload *dto.SearchGetRequest, 
 	}
 
 	limit, offset := abstraction.GetLimitOffset(p)
-
 	err := query.Limit(limit).Offset(offset).Find(&users).Error
 
-	return users, abstraction.CheckInfoPagination[model.UserEntityModel](p, count), err
+	return users, abstraction.BuildPaginationInfo[model.UserEntityModel](p, count), err
 }
 
 func (r *user) FindByID(ctx *abstraction.Context, id uuid.UUID) (model.UserEntityModel, error) {

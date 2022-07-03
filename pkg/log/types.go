@@ -19,26 +19,3 @@ type LogError struct {
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }
-
-type LogActivity struct {
-	ID        string    `json:"id"`
-	TableName string    `json:"table_name"`
-	Email     string    `json:"email"`
-	Row       string    `json:"row"`
-	NewData   string    `json:"new_data"`
-	OldData   string    `json:"old_data"`
-	Action    string    `json:"action"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-type LogLogin struct {
-	ID          string `json:"id"`
-	Email       string `json:"email"`
-	DateLogin   string `json:"date_login"`
-	DateLogout  string `json:"date_logout"`
-	Description string `json:"description"`
-
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}

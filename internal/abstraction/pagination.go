@@ -15,7 +15,6 @@ type PaginationInfo struct {
 }
 
 func GetLimitOffset(p *Pagination) (limit, offset int) {
-
 	if p.PageSize != nil {
 		limit = *p.PageSize
 	} else {
@@ -32,7 +31,7 @@ func GetLimitOffset(p *Pagination) (limit, offset int) {
 	return
 }
 
-func CheckInfoPagination[T any](p *Pagination, count int64) *PaginationInfo {
+func BuildPaginationInfo[T any](p *Pagination, count int64) *PaginationInfo {
 	info := PaginationInfo{
 		Pagination: p,
 	}

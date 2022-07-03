@@ -1,38 +1,19 @@
 package factory
 
 import (
-	"github.com/nakoding-community/goboil-clean/database"
-	"github.com/nakoding-community/goboil-clean/internal/repository"
-	"github.com/nakoding-community/goboil-clean/pkg/constant"
-
-	"gorm.io/gorm"
+	"github.com/nakoding-community/goboil-clean/internal/factory/repository"
+	"github.com/nakoding-community/goboil-clean/internal/factory/usecase"
 )
 
 type Factory struct {
-	Db             *gorm.DB
-	UserRepository repository.User
+	Repository repository.Factory
+	Usecase    usecase.Factory
 }
 
-func NewFactory() *Factory {
-	f := &Factory{}
-	f.SetupDb()
-	f.SetupRepository()
+func Init() Factory {
+	f := Factory{}
+	f.Repository = repository.Init()
+	f.Usecase = usecase.Init(f.Repository)
 
 	return f
-}
-
-func (f *Factory) SetupDb() {
-	db, err := database.Connection(constant.DB_GOBOIL_CLEAN)
-	if err != nil {
-		panic("Failed setup db, connection is undefined")
-	}
-	f.Db = db
-}
-
-func (f *Factory) SetupRepository() {
-	if f.Db == nil {
-		panic("Failed setup repository, db is undefined")
-	}
-
-	f.UserRepository = repository.NewUser(f.Db)
 }
