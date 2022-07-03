@@ -7,7 +7,6 @@ import (
 	"github.com/nakoding-community/goboil-clean/database/migration"
 	"github.com/nakoding-community/goboil-clean/database/seeder"
 	"github.com/nakoding-community/goboil-clean/internal/factory"
-	"github.com/nakoding-community/goboil-clean/internal/handler/rest"
 	"github.com/nakoding-community/goboil-clean/internal/handler/web"
 	"github.com/nakoding-community/goboil-clean/internal/handler/ws"
 	"github.com/nakoding-community/goboil-clean/internal/middleware"
@@ -57,7 +56,7 @@ func main() {
 	f := factory.Init()
 
 	// handler
-	rest.Init(e, f)
+	// rest.Init(e, f)
 	web.Init(e, f)
 	ws.Init(e, f)
 

@@ -1,19 +1,19 @@
 version: "3.9"
 services:
   # postgres
-  goboil-clean-postgres:
-    container_name: goboil-clean-postgres
-    image: postgres:12-alpine 
-    environment: 
-      - POSTGRES_USER=goboil_clean_user
-      - POSTGRES_PASSWORD=f72d8509-c70a-485a-a471-23f899b988ab
-      - POSTGRES_DB=goboil_clean_db
-    volumes: 
-      - goboil-clean-postgres:/var/lib/postgresql
-    ports:
-      - "5432:5432"
-    networks:
-      - goboil-clean-net
+  # goboil-clean-postgres:
+  #   container_name: goboil-clean-postgres
+  #   image: postgres:12-alpine 
+  #   environment: 
+  #     - POSTGRES_USER=goboil_clean_user
+  #     - POSTGRES_PASSWORD=f72d8509-c70a-485a-a471-23f899b988ab
+  #     - POSTGRES_DB=goboil_clean_db
+  #   volumes: 
+  #     - goboil-clean-postgres:/var/lib/postgresql
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - goboil-clean-net
   
   # redis
   # goboil-clean-redis:

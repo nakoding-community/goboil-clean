@@ -14,8 +14,8 @@ type Factory struct {
 
 func Init() Factory {
 	f := Factory{}
-	f.Repository = repository.Init()
-	f.Usecase = usecase.Init(f.Repository)
+	// f.Repository = repository.Init()
+	// f.Usecase = usecase.Init(f.Repository)
 	f.WsHub = abstraction.NewWsHub()
 
 	return f
