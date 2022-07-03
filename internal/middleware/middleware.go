@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/nakoding-community/goboil-clean/pkg/constant"
-	xtemplate "github.com/nakoding-community/goboil-clean/pkg/template"
+	xtemplate "github.com/nakoding-community/goboil-clean/pkg/util/template"
 	"github.com/nakoding-community/goboil-clean/pkg/util/validator"
 
 	"github.com/labstack/echo/v4"
