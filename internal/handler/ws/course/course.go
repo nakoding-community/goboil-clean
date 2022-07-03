@@ -55,10 +55,12 @@ func ProcessCourse(ch *abstraction.WsChannel) {
 	for {
 		select {
 		case v := <-ch.MsgReceive:
-			msg := []byte(string(v.Msg) + "mask")
+			// if we wanna mask something
+			// msg := []byte("drawName('malik')")
+
 			ch.MsgSend <- abstraction.WsMsg{
 				MsgType: v.MsgType,
-				Msg:     msg,
+				Msg:     v.Msg,
 			}
 		case <-ch.Done:
 			return
