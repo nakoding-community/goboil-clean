@@ -21,7 +21,7 @@ func Init() Factory {
 }
 
 func (f *Factory) InitDb() {
-	db, err := database.Connection(constant.DB_GOBOIL_CLEAN)
+	db, err := database.GetConnection(constant.DB_GOBOIL_CLEAN)
 	if err != nil {
 		panic("Failed init db, connection is undefined")
 	}

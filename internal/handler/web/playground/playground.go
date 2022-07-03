@@ -22,6 +22,6 @@ func (h *handler) Route(g *echo.Group) {
 
 func (h *handler) Get(c echo.Context) error {
 	type M map[string]interface{}
-	data := M{"message": "Hello World!"}
+	data := M{"message": "playground"}
 	return c.Render(http.StatusOK, "playground.html", data)
 }

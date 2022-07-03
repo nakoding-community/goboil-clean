@@ -25,7 +25,7 @@ func Init() {
 		return
 	}
 
-	conn, err := database.Connection(constant.DB_GOBOIL_CLEAN)
+	conn, err := database.GetConnection(constant.DB_GOBOIL_CLEAN)
 	if err != nil {
 		panic(err)
 	}

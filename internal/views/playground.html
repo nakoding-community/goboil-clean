@@ -4,6 +4,64 @@
         <title></title>
     </head>
     <body>
-        Message from index: {{.message}}!
+        Hello {{.message}}!
+
+        <div id="result"></div>
+        <div class="editor"></div>
+        <form id="form">
+            <input type="submit" value="Send" />
+            <input type="text" id="msg" size="64" autofocus />
+        </form>
+
+        <script type="text/javascript">
+            window.onload = function () {
+                var host = "ws://localhost:3030/ws/course"
+                var query = "?key=sender:malik"
+                var conn
+                var msg = document.getElementById("msg")
+                var result = document.getElementById("result")
+                
+                function updateResult(msg) {
+                    result.innerHTML = msg 
+                }
+
+                document.getElementById("form").onsubmit = function () {
+                    if (!conn) {
+                        return false
+                    }
+                    if (!msg.value) {
+                        return false
+                    }
+                    conn.send(msg.value)
+                    msg.value = ""
+                    return false
+                }
+            
+                if (window["WebSocket"]) {
+                    conn = new WebSocket(host+query)
+                    conn.onclose = function (evt) {
+                        var error = "error: connection closed"
+                        console.log(error)
+                        updateResult(error) 
+                    }
+                    conn.onmessage = function (evt) {
+                        var messages = evt.data.split('\n')
+                        for (var i = 0; i < messages.length; i++) {
+                            console.log("success receive: "+ messages[i])
+                            updateResult(messages[i])
+                        }
+                    }
+                    conn.addEventListener('error', function (event) {
+                        var error = "error: ws listen error"
+                        console.log(error, event)
+                        updateResult(error)
+                    })
+                } else {
+                    var error = "error: your browser does not support websockets"
+                    console.log(error)
+                    updateResult(error)
+                }
+            }
+        </script>
     </body>
 </html>

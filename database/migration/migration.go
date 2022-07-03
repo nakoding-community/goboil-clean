@@ -38,7 +38,7 @@ func Init() {
 	}
 
 	for k, v := range mgConfigurations {
-		dbConnection, err := database.Connection(k)
+		dbConnection, err := database.GetConnection(k)
 		if err != nil {
 			logrus.Error(fmt.Sprintf("Failed to run migration, database not found %s", k))
 		} else {

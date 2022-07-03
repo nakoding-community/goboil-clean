@@ -4,6 +4,65 @@
         <title></title>
     </head>
     <body>
-        Message from index: {{.message}}!
+        Hello {{.message}}!
+
+        <div id="result"></div>
+        <canvas id="myCanvas"></canvas>
     </body>
 </html>
+<script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="https://s3.amazonaws.com/codecademy-content/courses/hour-of-code/js/alphabet.js"></script>
+<script type="text/javascript" src="https://s3.amazonaws.com/codecademy-content/courses/hour-of-code/js/bubbles.js"></script>
+<script type="text/javascript">
+    function updateCanvas(name, isBounce) {
+        var myCanvas = document.getElementById("myCanvas")
+        myCanvas.innerHTML = ""
+
+        var black = [0, 0, 0]
+        letterColors = [black]
+        bubbleShape = "circle"
+
+        drawName(name, letterColors)
+        if (isBounce) {
+            bounceBubbles()
+        }
+    }
+</script>
+<script type="text/javascript">
+    window.onload = function () {
+        var host = "ws://localhost:3030/ws/course"
+        var query = "?key=receiver:malik"
+        var conn
+        var result = document.getElementById("result")
+
+        function updateResult(msg) {
+            result.innerHTML = msg
+        }
+    
+        if (window["WebSocket"]) {
+            conn = new WebSocket(host+query)
+            conn.onclose = function (evt) {
+                var error = "error: connection closed"
+                console.log(error)
+                updateResult(error)
+            }
+            conn.onmessage = function (evt) {
+                var messages = evt.data.split('\n')
+                for (var i = 0; i < messages.length; i++) {
+                    console.log("success receive: "+ messages[i])
+                    updateResult(messages[i])
+                    updateCanvas(messages[i], true)
+                }
+            }
+            conn.addEventListener('error', function (event) {
+                var error = "error: ws listen error"
+                console.log(error, event)
+                updateResult(error)
+            })
+        } else {
+            var error = "error: your browser does not support websockets"
+            console.log(error)
+            updateResult(error)
+        }
+    }
+</script>

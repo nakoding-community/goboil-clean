@@ -1,34 +1,56 @@
 package ws
 
 import (
-	"log"
+	"errors"
+	"strings"
 
-	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
+	"github.com/nakoding-community/goboil-clean/internal/abstraction"
+	"github.com/nakoding-community/goboil-clean/internal/factory"
 	"github.com/sirupsen/logrus"
 )
 
-func NewWs(c echo.Context) error {
-	upgrader := websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
+func HubAssignor(c echo.Context, ch *abstraction.WsChannel, f factory.Factory) error {
+	queries := c.Request().URL.Query()
+	allowFields := map[string]bool{
+		"sender":   true,
+		"receiver": true,
 	}
-	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
-	if err != nil {
-		log.Fatal(err)
+	for field, values := range queries {
+		if field != "key" || len(values) == 0 {
+			return errors.New("invalid key")
+		}
+
+		value := values[0]
+		if !strings.Contains(value, ":") {
+			return errors.New("invalid key format")
+		}
+
+		valueArgs := strings.Split(value, ":")
+		if !allowFields[valueArgs[0]] || len(valueArgs) < 2 {
+			return errors.New("invalid key format length")
+		}
+
+		switch valueArgs[0] {
+		case "sender":
+			if _, ok := f.WsHub.ChannelSenders[valueArgs[1]]; !ok {
+				f.WsHub.ChannelSenders[valueArgs[1]] = ch
+			}
+		case "receiver":
+			if _, ok := f.WsHub.ChannelReceivers[valueArgs[1]]; !ok {
+				f.WsHub.ChannelReceivers[valueArgs[1]] = ch
+			}
+		}
+
+		logrus.Println("WsHubAssignor:", *f.WsHub)
+
+		ch.User = valueArgs[1]
 	}
-	defer ws.Close()
 
-	ch := NewChannel(ws)
-	go wsReceiver(ch)
-	go wsSender(ch)
-
-	<-ch.Done
-	logrus.Println("NewWs: done")
 	return nil
 }
 
-func wsReceiver(ch *Channel) {
+func Receiver(ch *abstraction.WsChannel, f factory.Factory) {
 	defer func() {
 		ch.Ws.Close()
 	}()
@@ -39,7 +61,7 @@ func wsReceiver(ch *Channel) {
 			break
 		}
 		logrus.Println("wsReceiver:", msgType, string(msg))
-		ch.Command <- Command{
+		ch.MsgReceive <- abstraction.WsMsg{
 			MsgType: msgType,
 			Msg:     msg,
 		}
@@ -47,7 +69,7 @@ func wsReceiver(ch *Channel) {
 	close(ch.Done)
 }
 
-func wsSender(ch *Channel) {
+func Sender(ch *abstraction.WsChannel, f factory.Factory) {
 	defer func() {
 		ch.Ws.Close()
 	}()
@@ -55,12 +77,18 @@ func wsSender(ch *Channel) {
 breakLoop:
 	for {
 		select {
-		case v := <-ch.Command:
-			err := ch.Ws.WriteMessage(v.MsgType, []byte(v.Msg))
+		case v := <-ch.MsgSend:
+			conn := ch.Ws
+			val, ok := f.WsHub.ChannelReceivers[ch.User]
+			if ok {
+				conn = val.Ws
+			}
+
+			err := conn.WriteMessage(v.MsgType, v.Msg)
 			if err != nil {
-				logrus.Println(err)
 				break breakLoop
 			}
+			logrus.Println("wsSender:", v.MsgType, string(v.Msg))
 		case <-ch.Done:
 			return
 		}

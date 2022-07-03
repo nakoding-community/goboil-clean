@@ -41,7 +41,7 @@ func Init() {
 	}
 }
 
-func Connection(name string) (*gorm.DB, error) {
+func GetConnection(name string) (*gorm.DB, error) {
 	if dbConnections[name] == nil {
 		return nil, errors.New("Connection is undefined")
 	}
