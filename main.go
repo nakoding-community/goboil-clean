@@ -7,11 +7,12 @@ import (
 	"github.com/nakoding-community/goboil-clean/database/migration"
 	"github.com/nakoding-community/goboil-clean/database/seeder"
 	"github.com/nakoding-community/goboil-clean/internal/factory"
-	"github.com/nakoding-community/goboil-clean/internal/http"
+	"github.com/nakoding-community/goboil-clean/internal/handler/rest"
+	"github.com/nakoding-community/goboil-clean/internal/handler/web"
+	"github.com/nakoding-community/goboil-clean/internal/handler/ws"
 	"github.com/nakoding-community/goboil-clean/internal/middleware"
 	"github.com/nakoding-community/goboil-clean/pkg/constant"
 	"github.com/nakoding-community/goboil-clean/pkg/cron"
-	"github.com/nakoding-community/goboil-clean/pkg/sentry"
 	"github.com/nakoding-community/goboil-clean/pkg/util/env"
 
 	"github.com/labstack/echo/v4"
@@ -45,16 +46,20 @@ func main() {
 	// hook
 	migration.Init()
 	seeder.Init()
+
+	// lib
 	cron.Init()
 
 	e := echo.New()
 	middleware.Init(e)
 
+	// factory
 	f := factory.Init()
-	http.Init(e, f)
 
-	//sentry
-	sentry.Init()
+	// handler
+	rest.Init(e, f)
+	web.Init(e, f)
+	ws.Init(e, f)
 
 	e.Logger.Fatal(e.Start(":" + PORT))
 }

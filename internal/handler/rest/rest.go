@@ -1,4 +1,4 @@
-package http
+package rest
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 
 	docs "github.com/nakoding-community/goboil-clean/docs"
 	"github.com/nakoding-community/goboil-clean/internal/factory"
-	"github.com/nakoding-community/goboil-clean/internal/handler/http/auth"
-	"github.com/nakoding-community/goboil-clean/internal/handler/http/user"
+	"github.com/nakoding-community/goboil-clean/internal/handler/rest/auth"
+	"github.com/nakoding-community/goboil-clean/internal/handler/rest/user"
 	"github.com/nakoding-community/goboil-clean/pkg/constant"
 
 	"github.com/labstack/echo/v4"
@@ -37,6 +37,7 @@ func Init(e *echo.Echo, f factory.Factory) {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// routes
-	auth.NewHandler(f).Route(e.Group("/auth"))
-	user.NewHandler(f).Route(e.Group("/users"))
+	prefix := "rest"
+	auth.NewHandler(f).Route(e.Group(prefix + "/auth"))
+	user.NewHandler(f).Route(e.Group(prefix + "/users"))
 }

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/nakoding-community/goboil-clean/pkg/constant"
+	xtemplate "github.com/nakoding-community/goboil-clean/pkg/template"
 	"github.com/nakoding-community/goboil-clean/pkg/util/validator"
 
 	"github.com/labstack/echo/v4"
@@ -34,5 +35,5 @@ func Init(e *echo.Echo) {
 	)
 	e.HTTPErrorHandler = ErrorHandler
 	e.Validator = &validator.CustomValidator{Validator: validator.NewValidator()}
-
+	e.Renderer = xtemplate.NewRenderer("internal/views/*.html", true)
 }

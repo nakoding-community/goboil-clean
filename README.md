@@ -74,10 +74,10 @@ This project have some default endpoint :
   - Login
   - Register
 - Sample
-  - Get (with pagination, sort & filter)
+  - Get (+ pagination, sort & filter)
   - GetByID
-  - Create (with transaction scope)
-  - Update (with transaction scope)
+  - Create (+ transaction scope)
+  - Update (+ transaction scope)
   - Delete
 
 # Author
