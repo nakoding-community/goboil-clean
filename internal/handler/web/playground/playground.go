@@ -3,6 +3,7 @@ package playground
 import (
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/nakoding-community/goboil-clean/internal/factory"
 
 	"github.com/labstack/echo/v4"
@@ -21,7 +22,8 @@ func (h *handler) Route(g *echo.Group) {
 }
 
 func (h *handler) Get(c echo.Context) error {
+	key := uuid.New()
 	type M map[string]interface{}
-	data := M{"message": "playground"}
+	data := M{"message": "playground", "key": key}
 	return c.Render(http.StatusOK, "playground.html", data)
 }

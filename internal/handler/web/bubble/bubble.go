@@ -21,7 +21,18 @@ func (h *handler) Route(g *echo.Group) {
 }
 
 func (h *handler) Get(c echo.Context) error {
+	key := ""
+	queries := c.Request().URL.Query()
+	for field, values := range queries {
+		if field == "key" {
+			if len(values) == 0 {
+				continue
+			}
+			key = values[0]
+		}
+	}
+
 	type M map[string]interface{}
-	data := M{"message": "bubble"}
+	data := M{"message": "bubble", "key": key}
 	return c.Render(http.StatusOK, "bubble.html", data)
 }
